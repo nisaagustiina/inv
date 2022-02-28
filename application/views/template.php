@@ -10,7 +10,6 @@
 	<link rel="stylesheet" href="<?=base_url()?>assets/vendor/linearicons/style.css">
 	<link rel="stylesheet" href="<?=base_url()?>assets/css/main.css">
 	<link rel="stylesheet" href="<?=base_url()?>assets/vendor/DataTables/DataTables-1.11.3/css/dataTables.bootstrap.min.css">
-	<link rel="stylesheet" href="<?=base_url()?>assets/vendor/DataTables/Select-1.3.4/css/select.bootstrap.min.css">
 	<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700" rel="stylesheet">
 	<link rel="apple-touch-icon" sizes="76x76" href="<?=base_url()?>assets/img/apple-icon.png">
 	<link rel="icon" type="image/png" sizes="96x96" href="<?=base_url()?>assets/img/favicon.png">
@@ -50,6 +49,7 @@
 				<nav>
 					<ul class="nav">
 						<li><a href="<?=site_url('dashboard')?>" <?=$this->uri->segment(1) == 'dashboard' ? 'class="active"' : '' ?> ><i class="lnr lnr-home"></i> <span>Home</span></a></li>
+						<?php if($this->fungsi->user_login()->level == 1) { ?>
 						<li><a href="<?=site_url('vendor')?>" <?=$this->uri->segment(1) == 'vendor' ? 'class="active"' : '' ?>><i class="lnr lnr-users"></i> <span>Vendor</span></a></li>
 						<li>
 							<a href="#subPages" data-toggle="collapse"><i class="lnr lnr-file-empty"></i> <span>Item</span> <i class="icon-submenu lnr lnr-chevron-left"></i></a>
@@ -58,13 +58,14 @@
 									<li><a href="<?=site_url('category')?>">Category</a></li>
 									<li><a href="<?=site_url('group')?>">Group</a></li>
 									<li><a href="<?=site_url('unit')?>">Unit</a></li>
-									<li><a href="<?=site_url('warehouse')?>">Warehouse</a></li>
+									<li><a href="<?=site_url('item')?>">Warehouse</a></li>
 								</ul>
 							</div>
 						</li>
-						<li><a href="<?=site_url('stock')?>" class=""><i class="lnr lnr-enter"></i> <span>Incoming</span></a></li>
-						<li><a href="<?=site_url('outcome')?>" class=""><i class="lnr lnr-pencil"></i> <span>Request</span></a></li>
-                        <li><a href="<?=site_url('report')?>" class=""><i class="lnr lnr-chart-bars"></i> <span>Reports</span></a></li>
+						<?php } ?>
+						<li><a href="<?=site_url('stock/in')?>" <?=$this->uri->segment(1) == 'stock' && $this->uri->segment(2) == 'in' ? 'class="active"' : '' ?>><i class="lnr lnr-enter"></i> <span>Incoming</span></a></li>
+						<li><a href="<?=site_url('stock/out')?>" <?=$this->uri->segment(1) == 'stock' && $this->uri->segment(2) == 'out' ? 'class="active"' : '' ?> ><i class="lnr lnr-pencil"></i> <span>Use Stock</span></a></li>
+                        <li><a href="<?=site_url('report')?>" <?=$this->uri->segment(1) == 'report' ? 'class="active"' : '' ?>><i class="lnr lnr-chart-bars"></i> <span>Reports</span></a></li>
                         <?php if($this->fungsi->user_login()->level == 1) { ?>
                         <li><a href="<?=site_url('user')?>" <?=$this->uri->segment(1) == 'user' ? 'class="active"' : '' ?>><i class="lnr lnr-user"></i> <span>User</span></a></li>
                         <?php } ?>
@@ -78,8 +79,6 @@
 		<script src="<?=base_url()?>assets/vendor/bootstrap/js/bootstrap.min.js"></script>
 		<script src="<?= base_url()?>assets/vendor/DataTables/datatables.min.js"></script>
 		<script src="<?= base_url()?>assets/vendor/DataTables/DataTables-1.11.3/js/dataTables.bootstrap.min.js"></script>
-		<script src="<?= base_url()?>assets/vendor/DataTables/Select-1.3.4/js/dataTables.select.min.js"></script>
-		<script src="<?=base_url()?>assets/vendor/jquery-slimscroll/jquery.slimscroll.min.js"></script>
 		<script src="<?=base_url()?>assets/scripts/klorofil-common.js"></script>
 		
 		<div class="main">

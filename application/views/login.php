@@ -47,7 +47,7 @@
 					<div class="right">
 						<div class="overlay"></div>
 						<div class="content text">
-							<h1 class="heading">Sistem Informasi Inventory Warehouse</h1>
+							<h1 class="heading">Inventory Warehouse</h1>
 							<p>PT Daya Mandiri Terbarukan</p>
 						</div>
 					</div>

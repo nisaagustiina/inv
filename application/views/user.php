@@ -53,8 +53,8 @@
                         </div>
                         <div class="form-user">
                             <label for="pass">Password</label>
-                            <input name="pass" id="pass" type="password" class="form-control"  >
-                            <span class="help-block"></span>
+                            <input  name="pass" id="pass" type="password" class="form-control"  >
+                            <span class="help-block" id="edit"></span>
                         </div>
                         <div class="form-user">
                             <label for="level">Role</label>
@@ -111,6 +111,7 @@
                 $('#form')[0].reset();
                 $('.form-user').removeClass('has-error');
                 $('.help-block').empty();
+                $('#edit').text('(Biarkan jika tidak diganti)');
 
                 $.ajax({
                     type: "POST",
@@ -124,6 +125,7 @@
                         $('[name="level"]').val(data.level);
                         $('#modaluser').modal('show');
                         $('.modal-title').text('Edit user');
+                        $('.pass').text()
                     },
                     error:function(jqXHR, textStatus, errorThrown){
                         alert('Error get data from ajax');

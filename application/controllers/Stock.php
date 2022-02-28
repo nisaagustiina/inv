@@ -1,91 +1,76 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class stock extends CI_Controller {
+class Stock extends CI_Controller {
     function __construct(){
         parent::__construct();
         check_not_login();
-        $this->load->model('stock_m');
+        $this->load->model(['stock_m','item_m']);
     }
 
-	public function index(){
-		$this->template->load('template','income');
-	}
-
-    public function ajax_list(){
-        $list = $this->stock_m->get_datatables();
-        $data = array();
-        $no = @$_POST['start'];
-        foreach ($list as $stock) {
-            $no++;
-            $row = array();
-            $row[] = $no.".";
-            $row[] = $stock->po;
-            $row[] = $stock->id_item;
-            $row[] = $stock->qty;
-            $row[] = $stock->date;
-            $row[] = $stock->name;
-            $row[] = $stock->note;
-            // $row[] = '<div style="display:flex"><a style="margin-right:5px" class="btn btn-warning btn-xs" href="javascript:void(0)" title="Edit" onclick="edit_stock('."'".$stock->id_stock."'".')"><i class="fa fa-edit"></i> Edit</a>                           
-            // <a class="btn btn-danger btn-xs" href="javascript:void(0)" title="Hapus" onclick="delete_stock('."'".$stock->id_stock."'".')"><i class="fa fa-trash"></i> Delete</a></div>';
-
-            $data[] = $row;
-        }
- 
-        $output = array(
-            "draw" => @$_POST['draw'],
-            "recordsTotal" => $this->stock_m->count_all(),
-            "recordsFiltered" => $this->stock_m->count_filtered(),
-            "data" => $data,
-            );
-        echo json_encode($output);
-    }
- 
-    public function ajax_edit($id){
-        $data = $this->stock_m->get_by_id($id);
-        echo json_encode($data);
-    }
- 
-    public function ajax_add(){
-        $this->_validate();
-        $data = array(
-            'name_stock' => $this->input->post('name_stock')
-            );
-        $this->stock_m->save($data);
-        echo json_encode(array("status" => TRUE));
-    }
- 
-    public function ajax_update(){
-        $this->_validate();
-        $id = $this->input->post('id_stock');
-        $data = array(
-            'name_stock' => $this->input->post('name_stock')
+    public function stock_in_data(){
+        $data = array (
+            'item' => $this->item_m->get()->result(),
+            'stock_in' => $this->stock_m->get_stock_in()->result(),
         );
-        $this->stock_m->update($id, $data );
-        echo json_encode(array("status" => TRUE));
-    }
- 
-    public function ajax_delete($id){
-        $this->stock_m->delete_by_id($id);
-        echo json_encode(array("status" => TRUE));
+        $this->template->load('template','stock_in',$data);
     }
 
-    private function _validate(){
-        $data = array();
-        $data['error_string'] = array();
-        $data['inputerror'] = array();
-        $data['status'] = TRUE;
- 
-        if($this->input->post('name_stock') == ''){
-            $data['inputerror'][] = 'name_stock';
-            $data['error_string'][] = 'stock name is required';
-            $data['status'] = FALSE;
-        }
+    public function stock_out_data(){
+        $data = array (
+            'item' => $this->item_m->get()->result(),
+            'stock_out' => $this->stock_m->get_stock_out()->result(),
+        );
+        $this->template->load('template','stock_out',$data);
+    }
 
-        if($data['status'] === FALSE){
-            echo json_encode($data);
-            exit();
+    public function stock_in_del(){
+        $id_stock = $this->uri->segment(4);
+        $id_item = $this->uri->segment(5);
+        $qty = $this->stock_m->get($id_stock)->row()->qty;
+        $data = ['qty' => $qty, 'id_item' => $id_item];
+        $this->item_m->update_stock_out($data);
+        $this->stock_m->del($id_stock);
+        redirect('stock/in');
+    }
+
+    public function stock_out_del(){
+        $id_stock = $this->uri->segment(4);
+        $id_item = $this->uri->segment(5);
+        $qty = $this->stock_m->get($id_stock)->row()->qty;
+        $data = ['qty' => $qty, 'id_item' => $id_item];
+        $this->item_m->update_stock_in($data);
+        $this->stock_m->del($id_stock);
+        redirect('stock/out');
+    }
+
+    public function process(){
+        if(isset($_POST['in_add'])){
+            $data = array(
+                'id_item' => $this->input->post('id_item'),
+                'po' => $this->input->post('po'),
+                'qty' => $this->input->post('qty'),
+                'date' => $this->input->post('date'),
+                'id_user' => $this->session->userdata('id_user'),
+                'type' => 'in',
+                'note'=> $this->input->post('note'),
+            );
+            $this->stock_m->add_stock_in($data);
+            $this->item_m->update_stock_in($data);
+            redirect('stock/in');
+        }else if(isset($_POST['out_add'])){
+            $data = array(
+                'id_item' => $this->input->post('id_item'),
+                'po' => $this->input->post('po'),
+                'qty' => $this->input->post('qty'),
+                'date' => $this->input->post('date'),
+                'id_user' => $this->session->userdata('id_user'),
+                'type' => 'out',
+                'note'=> $this->input->post('note'),
+            );
+            $this->stock_m->add_stock_out($data);
+            $this->item_m->update_stock_out($data);
+            redirect('stock/out');
         }
     }
 }
-
